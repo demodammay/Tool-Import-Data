@@ -12,7 +12,7 @@ source_file = st.file_uploader("1. Please upload Source data file (Excel/CSV)", 
 template_file = st.file_uploader("2. Please upload Template file (Excel)", type=["xlsx"])
 global_country_code = st.text_input("3. Please input Country Code (Exp: VN, NP, AU,...):").strip().upper()
 
-if st.button("🚀 Bắt đầu xử lý"):
+if st.button("🚀 Start processing"):
     if not source_file or not template_file or not global_country_code:
         st.warning("⚠️ Please upload both files and enter the country code before running.!")
     else:
