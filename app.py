@@ -5,19 +5,19 @@ import io
 from datetime import datetime
 
 st.set_page_config(page_title="CRM Data Import Tool", layout="centered")
-st.title("🛠️ Tool Xử Lý Dữ Liệu Import")
+st.title("🛠️ Import Data Processing Tool")
 
 st.markdown("---")
-source_file = st.file_uploader("1. Tải lên file Data Gốc (Excel/CSV)", type=["xlsx", "csv"])
-template_file = st.file_uploader("2. Tải lên file Template (Excel)", type=["xlsx"])
-global_country_code = st.text_input("3. Nhập mã Quốc gia (VD: NP, PK, VN...):").strip().upper()
+source_file = st.file_uploader("1. Please upload Source data file (Excel/CSV)", type=["xlsx", "csv"])
+template_file = st.file_uploader("2. Please upload Template file (Excel)", type=["xlsx"])
+global_country_code = st.text_input("3. Please input Country Code (Exp: VN, NP, AU,...):").strip().upper()
 
 if st.button("🚀 Bắt đầu xử lý"):
     if not source_file or not template_file or not global_country_code:
-        st.warning("⚠️ Vui lòng tải đủ 2 file và nhập mã Quốc gia trước khi chạy!")
+        st.warning("⚠️ Please upload both files and enter the country code before running.!")
     else:
         try:
-            with st.spinner('Đang xử lý dữ liệu...'):
+            with st.spinner('Processing data...'):
                 # Đọc data
                 if source_file.name.endswith('.csv'):
                     source_df = pd.read_csv(source_file)
@@ -52,7 +52,7 @@ if st.button("🚀 Bắt đầu xử lý"):
                         break
 
                 if not ws:
-                    st.error("❌ Không tìm thấy sheet nào chứa các cột dữ liệu xe hợp lệ trong file Template.")
+                    st.error("❌ No sheets containing valid vehicle data columns were found in the Template file.")
                     st.stop()
 
                 # Bắt đầu điền từ dòng 9 (bỏ qua dòng 8)
@@ -104,19 +104,19 @@ if st.button("🚀 Bắt đầu xử lý"):
                 wb.save(output)
                 output.seek(0)
                 
-                st.success(f"✅ Đã xử lý thành công {len(source_df)} dòng!")
+                st.success(f"✅ Successfully processed {len(source_df)} rows!")
                 if missing_sap_count > 0:
-                    st.warning(f"⚠️ Có {missing_sap_count} dòng không tìm thấy mã SAP. Bạn nhớ kiểm tra lại file xuất ra nhé.")
+                    st.warning(f"⚠️ There are {missing_sap_count} lines indicating the SAP code was not found. Please double-check your output file.")
 
                 date_str = datetime.now().strftime("%y%m%d")
                 output_filename = f"Data_Import_{global_country_code}_{date_str}.xlsx"
 
                 st.download_button(
-                    label="📥 Tải file kết quả về máy",
+                    label="📥 Download the results file to your computer",
                     data=output,
                     file_name=output_filename,
                     mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                 )
 
         except Exception as e:
-            st.error(f"Đã xảy ra lỗi trong quá trình xử lý: {e}")
+            st.error(f"An error occurred during processing: {e}")
